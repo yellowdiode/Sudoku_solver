@@ -74,7 +74,6 @@ def read_file(file_name):
 
 
 grid = read_file('grid')
-print_grid(grid)
 if solve(grid):
     print_grid(grid)
 else:
