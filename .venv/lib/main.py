@@ -1,6 +1,5 @@
 small_grid_size = 3
 grid_size = small_grid_size * small_grid_size
-gridX = [[None] * grid_size for _ in range(grid_size)]
 
 
 def solve(grid):
