@@ -1,5 +1,6 @@
 small_grid_size = 3
 grid_size = small_grid_size * small_grid_size
+data = ['1,2,3']
 
 
 def solve(grid):
@@ -62,6 +63,18 @@ def print_grid(grid):
         print('-'*(2*(grid_size+small_grid_size)+1))
 
 
+def make_grid():
+    grid = [[[None] * grid_size] * grid_size]
+    for e in data:
+        features = e.split(',')
+        for i in range(len(features)):
+            features[i] = int(features[i])
+        grid[features[1]][features[2]] = features[0]
+    return grid
+
+
+
+
 def read_file(file_name):
     grid = []
     with open(file_name, "r") as f:
@@ -72,8 +85,9 @@ def read_file(file_name):
 
 
 
-grid = read_file('grid')
-if solve(grid):
+# grid = read_file('grid')
+
+if solve(make_grid()):
     print_grid(grid)
 else:
     print("No solutions")
