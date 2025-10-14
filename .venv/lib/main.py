@@ -1,6 +1,6 @@
 small_grid_size = 3
 grid_size = small_grid_size * small_grid_size
-data = ['1,2,3', '2,4,7']
+data = ['8,0,0', '3,1,2', '6,1,3', '7,2,1', '9,2,4', '2,2,6', '5,3,1', '7,3,5', '4,4,4', '5,4,5', '7,4,6', '1,5,3', '3,5,7', '1,6,2', '6,6,7', '8,6,8', '8,7,2', '5,7,3', '1,7,7', '9,8,1', '4,8,6']
 
 
 def solve(grid):
@@ -66,11 +66,28 @@ def print_grid(grid):
 def make_grid():
     grid = [[None] * grid_size for _ in range(grid_size)]
     for e in data:
-        (r, c, v) = (int(i) for i in e.split(','))
-        grid[r][c] = v
+        (v, r, c) = (int(i) for i in e.split(','))
+        if checker(grid, r, c, v):
+            grid[r][c] = v
+        else:
+            return False
     return grid
 
+def checker(grid, r, c, v):
+    for i in range(grid_size):
+        if grid[r][i] == v:
+            return False
+        if grid[i][c] == v:
+            return False
 
+    square_r = int(r / small_grid_size) * small_grid_size
+    square_c = int(c / small_grid_size) * small_grid_size
+    for row in range(small_grid_size):
+        for column in range(small_grid_size):
+            cur_square = grid[square_r + row][square_c + column]
+            if cur_square == v:
+                return False
+    return True
 
 
 def read_file(file_name):
@@ -88,9 +105,10 @@ def read_file(file_name):
 def main():
     grid = make_grid()
     print_grid(grid)
-    if solve(grid):
-        print_grid(grid)
-    else:
-        print("No solutions")
+    if grid:
+        if solve(grid):
+            print_grid(grid)
+        else:
+            print("No solutions")
 
 main()
