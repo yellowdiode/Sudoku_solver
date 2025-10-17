@@ -63,14 +63,13 @@ def print_grid(grid):
         print('-'*(2*(grid_size+small_grid_size)+1))
 
 
-def make_grid():
+def make_grid(values = []):
     grid = [[None] * grid_size for _ in range(grid_size)]
-    for e in data:
+    for e in values:
         (v, r, c) = (int(i) for i in e.split(','))
-        if checker(grid, r, c, v):
-            grid[r][c] = v
-        else:
-            return False
+        if not checker(grid, r, c, v):
+            return None
+        grid[r][c] = v
     return grid
 
 def checker(grid, r, c, v):
@@ -103,7 +102,7 @@ def read_file(file_name):
 # grid = read_file('grid')
 
 def main():
-    grid = make_grid()
+    grid = make_grid(data)
     print_grid(grid)
     if grid:
         if solve(grid):
