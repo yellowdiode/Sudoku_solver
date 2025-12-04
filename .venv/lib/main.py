@@ -110,7 +110,9 @@ def find_empties(grid):
     return [(r, c) for r in range(0, grid_size) for c in range(0, grid_size) if grid[r][c] is None]
 
 
-def generator(grid, empties = find_empties(grid)):
+def generator(grid, empties = None):
+    if empties is None:
+        empties = find_empties(grid)
     if len(empties) == 0:
         return False
     r, c = empties.pop(random.randint(0, len(empties)-1))
