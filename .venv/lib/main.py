@@ -129,7 +129,6 @@ def generator(grid, empties = None):
             grid[r][c] = None    # Should never happen
     return False
 
-
 # grid = read_file('grid')
 
 def main():
