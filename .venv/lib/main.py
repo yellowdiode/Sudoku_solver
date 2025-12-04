@@ -5,17 +5,18 @@ small_grid_size = 3
 grid_size = small_grid_size * small_grid_size
 data = ['9,8,0', '9,0,8', '4,0,1', '1,2,0', '5,3,0', '6,1,5', '3,2,5', '4,2,7', '7,3,3', '2,3,8', '8,4,3', '3,4,7', '6,4,8', '9,5,4', '3,6,2', '2,6,3', '8,6,4', '7,7,2', '1,7,7', '4,8,2', '5,8,4', '2,8,7']
 
+def solve(grid, solutions = None, max_solutions = None):
+    if solutions is None:
+        solutions = []
+        max_solutions = 1
+    return solve_(grid, solutions, max_solutions)
 
-def solve(grid, pos_grids = None, stopper = None, exit = False):
-    if pos_grids is None:
-        pos_grids = []
-    orig_pos_grids = list(pos_grids)
+def solve_(grid, solutions, max_solutions):
     least_pos = [0]*(grid_size+1)
     least_row = None
     least_column = None
     all_poss_num = [i+1 for i in range(grid_size)]
-    if exit:
-        return True
+
     for r in range(grid_size):
         square_r = int(r / small_grid_size) * small_grid_size
         for c in range(grid_size):
@@ -42,23 +43,18 @@ def solve(grid, pos_grids = None, stopper = None, exit = False):
                     least_column = c
 
     if least_row is None:
-        pos_grids.append(copy.deepcopy(grid))
-        if stopper is not None:
-            if len(pos_grids) >= stopper:
-                exit = True
-        return True
+        solutions.append(copy.deepcopy(grid))
+        return max_solutions is not None and len(solutions) >= max_solutions
 
     if len(least_pos) == 0:
         return False
 
     for val in least_pos:
         grid[least_row][least_column] = val
-        if solve(grid, pos_grids, stopper, exit):
-            pass
-        grid[least_row][least_column] = None
-    if orig_pos_grids == pos_grids:
-        return False
-    return pos_grids
+        if solve_(grid, solutions, max_solutions):
+            return True
+    grid[least_row][least_column] = None
+    return False
 
 
 def print_grid(grid):
@@ -110,54 +106,26 @@ def read_file(file_name):
     return grid
 
 
-def generator():
-    for i in range(0, 81):
-        r = random.randint(0, grid_size-1)
-        c = random.randint(0, grid_size-1)
-        if grid[r][c] is None:
-            place_holder = True
-            while place_holder:
-                v = random.randint(1, grid_size)
-                if checker(grid, r, c, v):
-                    grid[r][c] = v
-                    pos_grids = solve(grid)
-                    if len(pos_grids, None, 2) == 0:
-                        pass
-                    if len(pos_grids) == 1:
-                        return True
-                    place_holder = False
-                    pass
+def find_empties(grid):
+    return [(r, c) for r in range(0, grid_size) for c in range(0, grid_size) if grid[r][c] is None]
 
 
-
-    # grid = make_grid()
-    # for r in range(grid_size):
-    #     oh_no = False
-    #     while not oh_no:
-    #         for c in range(grid_size):
-    #             all_pos_options = [i for i in range(1, 10)]
-    #             checked = False
-    #             while not checked:
-    #
-    #                 if len(all_pos_options) == 0:
-    #                     oh_no = True
-    #                     checked = True
-    #                     pass
-    #                 rand_val = random.choice(all_pos_options)
-    #
-    #                 if checker(grid, r, c, rand_val):
-    #                     grid[r][c] = rand_val
-    #                     pos_grids = solve(grid)
-    #                     if len(pos_grids) == 1:
-    #                         return pos_grids[0]
-    #                     if len(pos_grids == 0):
-    #                         all_pos_options.remove(rand_val)
-    #                         grid[r][c] = None
-    #                         pass
-    #                     checked = True
-    #                 else:
-    #                     all_pos_options.remove(rand_val)
-    #
+def generator(grid, empties = find_empties(grid)):
+    if len(empties) == 0:
+        return False
+    r, c = empties.pop(random.randint(0, len(empties)-1))
+    numbers = [i for i in range(1, grid_size+1)]
+    for val in numbers.pop(random.randint(0, len(numbers)-1)):
+        if checker(grid, r, c, val):
+            grid[r][c] = val
+            solutions = []
+            solve(copy.deepcopy(grid), solutions, 2)
+            if len(solutions) == 1:
+                return True
+            if len(solutions) == 2:
+                return generator(grid, empties)
+            grid[r][c] = None    # Should never happen
+    return False
 
 
 # grid = read_file('grid')
