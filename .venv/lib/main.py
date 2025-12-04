@@ -6,12 +6,6 @@ grid_size = small_grid_size * small_grid_size
 data = ['9,8,0', '9,0,8', '4,0,1', '1,2,0', '5,3,0', '6,1,5', '3,2,5', '4,2,7', '7,3,3', '2,3,8', '8,4,3', '3,4,7', '6,4,8', '9,5,4', '3,6,2', '2,6,3', '8,6,4', '7,7,2', '1,7,7', '4,8,2', '5,8,4', '2,8,7']
 
 def solve(grid, solutions = None, max_solutions = None):
-    if solutions is None:
-        solutions = []
-        max_solutions = 1
-    return solve_(grid, solutions, max_solutions)
-
-def solve_(grid, solutions, max_solutions):
     least_pos = [0]*(grid_size+1)
     least_row = None
     least_column = None
@@ -43,6 +37,8 @@ def solve_(grid, solutions, max_solutions):
                     least_column = c
 
     if least_row is None:
+        if solutions is None:
+            return True
         solutions.append(copy.deepcopy(grid))
         return max_solutions is not None and len(solutions) >= max_solutions
 
@@ -51,7 +47,7 @@ def solve_(grid, solutions, max_solutions):
 
     for val in least_pos:
         grid[least_row][least_column] = val
-        if solve_(grid, solutions, max_solutions):
+        if solve(grid, solutions, max_solutions):
             return True
     grid[least_row][least_column] = None
     return False
